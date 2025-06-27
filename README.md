@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Healthy Meal App
 
 A Flutter app to help users improve dietary habits with personalized meal recommendations, health tracking, meal orders, and premium features.
@@ -40,3 +41,6 @@ A Flutter app to help users improve dietary habits with personalized meal recomm
 
 ## License
 MIT
+=======
+# healthy_food_app
+>>>>>>> b2c04eda8bc7f8d6e84c5dc1d1ad32209cdb6bdd
