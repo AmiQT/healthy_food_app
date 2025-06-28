@@ -27,7 +27,7 @@ Description: |
   All user data is stored securely and privately.
 
 RepoType: git
-Repo: https://github.com/yourusername/healthy_food_app
+Repo: https://github.com/AmiQT/healthy_food_app
 
 Builds:
   - versionName: '1.0.0'

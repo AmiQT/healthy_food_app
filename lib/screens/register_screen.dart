@@ -4,6 +4,7 @@ import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'main_nav_screen.dart';
 import '../utils/app_colors.dart';
+import '../utils/input_validator.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -34,10 +35,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _register(BuildContext context) async {
     if (_formKey.currentState == null || !_formKey.currentState!.validate())
       return;
+
     setState(() {
       isLoading = true;
       error = null;
     });
+
     try {
       await Provider.of<AuthProvider>(context, listen: false).register(
         name: name,
@@ -47,19 +50,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
         age: age,
         gender: gender,
       );
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const MainNavScreen()),
-        (route) => false,
-      );
-    } catch (e, stack) {
-      setState(() {
-        error = e.toString();
-      });
+
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const MainNavScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          error = e.toString().replaceAll('Exception: ', '');
+        });
+      }
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -97,8 +107,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   style: TextStyle(color: colors.bodyText),
                   onChanged: (v) => name = v,
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Enter name' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Enter name';
+                    }
+                    if (!InputValidator.isValidName(v)) {
+                      return 'Enter a valid name (letters, spaces, hyphens, apostrophes only)';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -118,8 +135,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(color: colors.bodyText),
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (v) => email = v,
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Enter email' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Enter email';
+                    }
+                    if (!InputValidator.isValidEmail(v)) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -139,8 +163,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(color: colors.bodyText),
                   obscureText: true,
                   onChanged: (v) => password = v,
-                  validator: (v) =>
-                      v == null || v.length < 6 ? 'Min 6 chars' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Enter password';
+                    }
+                    if (!InputValidator.isValidPassword(v)) {
+                      return 'Password must be at least 6 characters with letters and numbers';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
@@ -176,10 +207,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(color: colors.bodyText),
                   keyboardType: TextInputType.number,
                   onChanged: (v) => age = int.tryParse(v) ?? 0,
-                  validator: (v) =>
-                      v == null || int.tryParse(v) == null || int.parse(v) <= 0
-                      ? 'Enter valid age'
-                      : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) {
+                      return 'Enter age';
+                    }
+                    final ageValue = int.tryParse(v);
+                    if (ageValue == null ||
+                        !InputValidator.isValidAge(ageValue)) {
+                      return 'Enter a valid age (1-120)';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
@@ -196,7 +234,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
                 if (error != null) ...[
-                  Text(error!, style: TextStyle(color: colors.error)),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: colors.error.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: colors.error.withOpacity(0.3)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: colors.error,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            error!,
+                            style: TextStyle(color: colors.error, fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 8),
                 ],
                 isLoading
@@ -217,6 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         child: const Text('Register'),
                       ),
+                const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -224,8 +286,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       MaterialPageRoute(builder: (_) => const LoginScreen()),
                     );
                   },
-                  style: TextButton.styleFrom(foregroundColor: colors.accent),
-                  child: const Text('Already have an account? Login'),
+                  child: Text(
+                    'Already have an account? Login',
+                    style: TextStyle(color: colors.accent),
+                  ),
                 ),
               ],
             ),

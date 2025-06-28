@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../utils/input_validator.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,8 +24,28 @@ class AuthProvider with ChangeNotifier {
     double height = 170,
     String profileImageUrl = '',
   }) async {
+    // Input validation
+    if (!InputValidator.isValidName(name)) {
+      throw Exception('Invalid name format');
+    }
+    if (!InputValidator.isValidEmail(email)) {
+      throw Exception('Invalid email format');
+    }
+    if (!InputValidator.isValidPassword(password)) {
+      throw Exception(
+        'Password must be at least 6 characters with letters and numbers',
+      );
+    }
+    if (!InputValidator.isValidAge(age)) {
+      throw Exception('Invalid age');
+    }
+
+    // Sanitize inputs
+    final sanitizedName = InputValidator.sanitizeString(name);
+    final sanitizedEmail = InputValidator.sanitizeEmail(email);
+
     final UserCredential cred = await _auth.createUserWithEmailAndPassword(
-      email: email,
+      email: sanitizedEmail,
       password: password,
     );
     final user = cred.user;
@@ -34,8 +55,8 @@ class AuthProvider with ChangeNotifier {
     final uid = user.uid;
     final userData = AppUser(
       uid: uid,
-      name: name,
-      email: email,
+      name: sanitizedName,
+      email: sanitizedEmail,
       healthGoal: healthGoal,
       age: age,
       gender: gender,
@@ -49,8 +70,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> login({required String email, required String password}) async {
+    // Input validation
+    if (!InputValidator.isValidEmail(email)) {
+      throw Exception('Invalid email format');
+    }
+    if (password.isEmpty) {
+      throw Exception('Password is required');
+    }
+
+    // Sanitize email
+    final sanitizedEmail = InputValidator.sanitizeEmail(email);
+
     final UserCredential cred = await _auth.signInWithEmailAndPassword(
-      email: email,
+      email: sanitizedEmail,
       password: password,
     );
     final user = cred.user;
@@ -94,6 +126,14 @@ class AuthProvider with ChangeNotifier {
     required double weight,
     required double height,
   }) async {
+    // Input validation
+    if (!InputValidator.isValidWeight(weight)) {
+      throw Exception('Invalid weight value');
+    }
+    if (!InputValidator.isValidHeight(height)) {
+      throw Exception('Invalid height value');
+    }
+
     final currentUser = _auth.currentUser;
     if (currentUser != null) {
       await _firestore.collection('users').doc(currentUser.uid).update({

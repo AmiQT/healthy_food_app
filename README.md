@@ -45,7 +45,7 @@ A comprehensive healthy food and meal planning app built with Flutter that helps
 ### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/healthy_food_app.git
+git clone https://github.com/AmiQT/healthy_food_app.git
 
 # Navigate to the project directory
 cd healthy_food_app

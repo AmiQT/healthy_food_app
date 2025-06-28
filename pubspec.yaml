@@ -2,9 +2,9 @@ name: healthy_food_app
 description: "A comprehensive healthy food and meal planning app that helps users discover nutritious recipes, track their meals, and maintain a healthy lifestyle. Features include meal recommendations, favorites, cart management, and personalized nutrition tracking."
 
 # Repository information for F-Droid
-repository: https://github.com/yourusername/healthy_food_app
-homepage: https://github.com/yourusername/healthy_food_app
-issue_tracker: https://github.com/yourusername/healthy_food_app/issues
+repository: https://github.com/AmiQT/healthy_food_app
+homepage: https://github.com/AmiQT/healthy_food_app
+issue_tracker: https://github.com/AmiQT/healthy_food_app/issues
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
