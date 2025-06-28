@@ -20,7 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String healthGoal = '';
   int age = 0;
   String gender = '';
-  String profileImageUrl = '';
   final List<String> healthGoals = [
     'Lose Weight',
     'Build Muscle',
@@ -33,7 +32,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? error;
 
   void _register(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState == null || !_formKey.currentState!.validate())
+      return;
     setState(() {
       isLoading = true;
       error = null;
@@ -46,14 +46,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         healthGoal: healthGoal,
         age: age,
         gender: gender,
-        profileImageUrl: profileImageUrl,
       );
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const MainNavScreen()),
         (route) => false,
       );
-    } catch (e) {
+    } catch (e, stack) {
       setState(() {
         error = e.toString();
       });
@@ -194,28 +193,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       v == null || v.isEmpty ? 'Select gender' : null,
                   dropdownColor: colors.card,
                   style: TextStyle(color: colors.bodyText),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: profileImageUrl.isNotEmpty
-                          ? NetworkImage(profileImageUrl)
-                          : null,
-                      child: profileImageUrl.isEmpty
-                          ? const Icon(Icons.person, size: 30)
-                          : null,
-                    ),
-                    const SizedBox(width: 16),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text('Upload Photo'),
-                      onPressed: () async {
-                        // TODO: Add image picker logic
-                      },
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 16),
                 if (error != null) ...[

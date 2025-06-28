@@ -27,7 +27,11 @@ class AuthProvider with ChangeNotifier {
       email: email,
       password: password,
     );
-    final uid = cred.user!.uid;
+    final user = cred.user;
+    if (user == null) {
+      throw Exception('User not found after registration');
+    }
+    final uid = user.uid;
     final userData = AppUser(
       uid: uid,
       name: name,
@@ -49,9 +53,17 @@ class AuthProvider with ChangeNotifier {
       email: email,
       password: password,
     );
-    final uid = cred.user!.uid;
+    final user = cred.user;
+    if (user == null) {
+      throw Exception('User not found after login');
+    }
+    final uid = user.uid;
     final doc = await _firestore.collection('users').doc(uid).get();
-    _user = AppUser.fromMap(doc.data()!, uid);
+    final data = doc.data();
+    if (data == null) {
+      throw Exception('User data not found in Firestore');
+    }
+    _user = AppUser.fromMap(data, uid);
     notifyListeners();
   }
 
@@ -69,8 +81,11 @@ class AuthProvider with ChangeNotifier {
           .doc(currentUser.uid)
           .get();
       if (doc.exists) {
-        _user = AppUser.fromMap(doc.data()!, currentUser.uid);
-        notifyListeners();
+        final data = doc.data();
+        if (data != null) {
+          _user = AppUser.fromMap(data, currentUser.uid);
+          notifyListeners();
+        }
       }
     }
   }

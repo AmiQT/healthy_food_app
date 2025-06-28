@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import '../utils/app_colors.dart';
-import '../widgets/shimmer_loader.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_paypal/flutter_paypal.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -295,7 +292,7 @@ class ProfileScreen extends StatelessWidget {
     final user = Provider.of<AuthProvider>(context).user;
     final authProvider = Provider.of<AuthProvider>(context);
     if (user == null) {
-      return const Scaffold(body: Center(child: Text('No user info.')));
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     double bmi = user.weight / ((user.height / 100) * (user.height / 100));
     int calories = 2000; // Placeholder
@@ -581,14 +578,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
+                  // --- PayPal integration (commented out for now) ---
+                  /*
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) => UsePaypal(
                         sandboxMode: true,
-                        clientId:
-                            "Ae69mgVugxo27MW84Ch66CrNRK_42LF7-sv_TzkdGp7UvXUU65kBpV2ugtdOKMDdf-nsqXo2TnYNioqb",
-                        secretKey:
-                            "EG9oLYve7X4U6Wa6DZiQ4qSCcljc5v0iXbur_-K_k6s4iAIyIaHD0-5gG-QqBfMdmgre7gB15il1N7JE",
+                        clientId: "YOUR-SANDBOX-CLIENT-ID",
+                        secretKey: "YOUR-SANDBOX-SECRET",
                         returnURL: "https://example.com/return",
                         cancelURL: "https://example.com/cancel",
                         transactions: [
@@ -599,11 +596,11 @@ class ProfileScreen extends StatelessWidget {
                               "details": {
                                 "subtotal": '9.99',
                                 "shipping": '0',
-                                "shipping_discount": 0,
-                              },
+                                "shipping_discount": 0
+                              }
                             },
                             "description": "Premium Account Upgrade",
-                          },
+                          }
                         ],
                         note: "Contact us for any questions on your upgrade.",
                         onSuccess: (Map params) async {
@@ -613,9 +610,7 @@ class ProfileScreen extends StatelessWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Congratulations!'),
-                                content: const Text(
-                                  'You are now a Premium member!',
-                                ),
+                                content: const Text('You are now a Premium member!'),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
@@ -660,6 +655,26 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   );
+                  */
+                  // --- End PayPal integration ---
+
+                  // Original instant upgrade logic:
+                  await authProvider.upgradeToPremium();
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Congratulations!'),
+                        content: const Text('You are now a Premium member!'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
               ),
             ),

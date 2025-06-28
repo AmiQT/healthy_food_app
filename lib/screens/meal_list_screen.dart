@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/meal_provider.dart';
 import 'meal_detail_screen.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../utils/app_colors.dart';
-import '../widgets/shimmer_loader.dart';
 import '../services/external_recipe_service.dart';
 import '../providers/auth_provider.dart';
 
@@ -104,19 +102,6 @@ class _MealListScreenState extends State<MealListScreen> {
       ...{for (final m in mealProvider.meals) m.category}
         ..removeWhere((c) => c.isEmpty),
     ];
-    final markers = meals
-        .where((m) => m.latitude != 0.0 && m.longitude != 0.0)
-        .map(
-          (m) => Marker(
-            markerId: MarkerId(m.id),
-            position: LatLng(m.latitude, m.longitude),
-            infoWindow: InfoWindow(title: m.name),
-          ),
-        )
-        .toSet();
-    final initialLatLng = markers.isNotEmpty
-        ? markers.first.position
-        : const LatLng(3.123, 101.678); // Default location
     final colors = AppColors.of(context);
     final isPremiumUser = Provider.of<AuthProvider>(context).isPremium;
     if (meals.isEmpty) {
@@ -134,19 +119,6 @@ class _MealListScreenState extends State<MealListScreen> {
       ),
       body: Column(
         children: [
-          // Remove or comment out this block if you don't want the map:
-          // SizedBox(
-          //   height: 200,
-          //   child: GoogleMap(
-          //     initialCameraPosition: CameraPosition(
-          //       target: initialLatLng,
-          //       zoom: 12,
-          //     ),
-          //     markers: markers,
-          //     myLocationButtonEnabled: false,
-          //     zoomControlsEnabled: false,
-          //   ),
-          // ),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -191,22 +163,6 @@ class _MealListScreenState extends State<MealListScreen> {
                                           width: 56,
                                           height: 56,
                                           fit: BoxFit.cover,
-                                          loadingBuilder:
-                                              (
-                                                context,
-                                                child,
-                                                loadingProgress,
-                                              ) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                }
-                                                return ShimmerLoader(
-                                                  width: 56,
-                                                  height: 56,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                );
-                                              },
                                         ),
                                       )
                                     : Icon(
@@ -218,22 +174,9 @@ class _MealListScreenState extends State<MealListScreen> {
                                   meal.name,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      meal.category,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                    Text(
-                                      'RM ' + meal.price.toStringAsFixed(2),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium,
-                                    ),
-                                  ],
+                                subtitle: Text(
+                                  meal.category,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 trailing: meal.isPremium
                                     ? const Icon(
@@ -246,29 +189,12 @@ class _MealListScreenState extends State<MealListScreen> {
                             if (isLocked)
                               Positioned.fill(
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.45),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.lock,
-                                          color: Colors.white,
-                                          size: 36,
-                                        ),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Premium',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                  color: Colors.black.withOpacity(0.5),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.lock,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
                                   ),
                                 ),

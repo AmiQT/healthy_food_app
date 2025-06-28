@@ -14,6 +14,7 @@ class FavoritesScreen extends StatelessWidget {
         .where((m) => mealProvider.favorites.contains(m.id))
         .toList();
     final colors = AppColors.of(context);
+    final isLoading = mealProvider.meals.isEmpty;
     return Scaffold(
       backgroundColor: colors.background,
       appBar: AppBar(
@@ -21,7 +22,9 @@ class FavoritesScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: colors.heading),
         title: Text('Favorites', style: TextStyle(color: colors.heading)),
       ),
-      body: favoriteMeals.isEmpty
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : favoriteMeals.isEmpty
           ? Center(
               child: Text(
                 'No favorite meals yet.',

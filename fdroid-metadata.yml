@@ -1,0 +1,49 @@
+Categories:
+  - Health & Fitness
+  - Food & Drink
+License: MIT
+WebSite: https://github.com/yourusername/healthy_food_app
+SourceCode: https://github.com/yourusername/healthy_food_app
+IssueTracker: https://github.com/yourusername/healthy_food_app/issues
+
+Name: Healthy Food App
+Summary: A comprehensive healthy food and meal planning app
+Description: |
+  Healthy Food App helps users discover nutritious recipes, track their meals, 
+  and maintain a healthy lifestyle. Features include:
+  
+  • Meal discovery and recommendations
+  • Nutritional tracking and analysis
+  • Favorite recipes management
+  • Shopping cart functionality
+  • User authentication and profiles
+  • Dark and light theme support
+  • Local notifications for meal reminders
+  • Offline recipe access
+  • Location services for nearby healthy food options
+  • Payment integration for premium features
+  
+  The app is built with Flutter and uses Firebase for backend services.
+  All user data is stored securely and privately.
+
+RepoType: git
+Repo: https://github.com/yourusername/healthy_food_app
+
+Builds:
+  - versionName: '1.0.0'
+    versionCode: 1
+    commit: v1.0.0
+    subdir: app
+    gradle:
+      - yes
+    output: app-release.apk
+    srclibs:
+      - flutter@3.8.1
+    preassemble:
+      - echo "flutter pub get"
+      - flutter pub get
+    assemble: flutter build apk --release
+    ndk: r25c
+    target: android-34
+
+AutoName: Healthy Food App 

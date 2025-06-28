@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:healthy_food_app/widgets/shimmer_loader.dart';
 
 import 'package:healthy_food_app/main.dart';
 
@@ -26,5 +27,39 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
+  });
+
+  testWidgets('LocationMapWidget test', (WidgetTester tester) async {
+    // Test with valid coordinates
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LocationMapWidget(
+            latitude: 3.1390,
+            longitude: 101.6869,
+            title: 'Test Location',
+          ),
+        ),
+      ),
+    );
+
+    // Verify the title is displayed
+    expect(find.text('Test Location'), findsOneWidget);
+
+    // Test with invalid coordinates (should use fallback)
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: LocationMapWidget(
+            latitude: 0.0,
+            longitude: 0.0,
+            title: 'Invalid Location',
+          ),
+        ),
+      ),
+    );
+
+    // Verify the title is still displayed
+    expect(find.text('Invalid Location'), findsOneWidget);
   });
 }

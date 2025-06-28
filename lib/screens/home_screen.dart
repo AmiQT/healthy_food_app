@@ -10,25 +10,29 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).user;
+    final colors = AppColors.of(context);
+
     if (user == null) {
       return const Center(child: CircularProgressIndicator());
     }
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        iconTheme: const IconThemeData(color: AppColors.heading),
-        title: const Text('Home', style: TextStyle(color: AppColors.heading)),
+        backgroundColor: colors.background,
+        iconTheme: IconThemeData(color: colors.heading),
+        title: Text('Home', style: TextStyle(color: colors.heading)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await Provider.of<AuthProvider>(context, listen: false).logout();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                (route) => false,
-              );
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
           ),
         ],

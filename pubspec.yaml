@@ -1,5 +1,11 @@
 name: healthy_food_app
-description: "A new Flutter project."
+description: "A comprehensive healthy food and meal planning app that helps users discover nutritious recipes, track their meals, and maintain a healthy lifestyle. Features include meal recommendations, favorites, cart management, and personalized nutrition tracking."
+
+# Repository information for F-Droid
+repository: https://github.com/yourusername/healthy_food_app
+homepage: https://github.com/yourusername/healthy_food_app
+issue_tracker: https://github.com/yourusername/healthy_food_app/issues
+
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -31,19 +37,18 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
-  firebase_core: ^2.0.0
-  firebase_auth: ^4.0.0
-  cloud_firestore: ^4.0.0
-  firebase_storage: ^11.7.7
+  firebase_core: ^3.14.0
+  firebase_auth: ^5.6.0
+  cloud_firestore: ^5.6.9
+  firebase_storage: ^12.4.7
   image_picker: ^1.0.0
-  google_fonts: ^4.0.0
-  cached_network_image: ^3.3.1
-  google_maps_flutter: ^2.5.3
+  google_fonts: ^6.2.1
+  cached_network_image: ^3.4.1
   shared_preferences: ^2.2.2
   http: ^1.1.0
   flutter_local_notifications: ^19.3.0
   path_provider: ^2.1.2
-  flutter_map: ^6.1.0
+  flutter_map: ^8.1.1
   flutter_paypal: ^0.2.0
   # Add other dependencies as needed
 

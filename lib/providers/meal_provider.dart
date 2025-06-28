@@ -54,17 +54,11 @@ class MealProvider with ChangeNotifier {
   }
 
   Future<void> fetchMeals() async {
-    print('fetchMeals called');
     try {
       final snapshot = await _firestore.collection('meals').get();
-      print('Docs fetched: ${snapshot.docs.length}');
-      for (var doc in snapshot.docs) {
-        print('Meal doc: ${doc.data()}');
-      }
       _meals = snapshot.docs
           .map((doc) => Meal.fromMap(doc.data(), doc.id))
           .toList();
-      print('Meals parsed: ${_meals.length}');
       notifyListeners();
       // Cache meals as JSON
       final prefs = await SharedPreferences.getInstance();
@@ -72,9 +66,7 @@ class MealProvider with ChangeNotifier {
         _meals.map((m) => m.toMap()..['id'] = m.id).toList(),
       );
       await prefs.setString('cached_meals', mealListJson);
-      print('Fetched meals: ${_meals.length}');
     } catch (e) {
-      print('Error fetching meals: $e');
       // On error, try to load cached meals
       final prefs = await SharedPreferences.getInstance();
       final cached = prefs.getString('cached_meals');
@@ -106,7 +98,7 @@ class MealProvider with ChangeNotifier {
 
   void removeFromCart(String mealId) {
     if (_cart.containsKey(mealId)) {
-      if (_cart[mealId]! > 1) {
+      if (_cart[mealId] != null && _cart[mealId]! > 1) {
         _cart[mealId] = _cart[mealId]! - 1;
       } else {
         _cart.remove(mealId);
